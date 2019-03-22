@@ -1,8 +1,6 @@
 const DEBUG = 1;
 DEBUG? console.log('DEBUG ENABLED'): {};
 
-//require('@google-cloud/debug-agent').start();
-
 const child_process = require('child_process');
 
 const Promise = require('promise');
@@ -11,6 +9,9 @@ const Discord = require('discord.js');
 const client = new Discord.Client();
 
 const Config = require('./conf/bot.json');
+if (Config.env === "prod")
+	require('@google-cloud/debug-agent').start();
+
 
 const SUMMON_COMMAND = Config.summon;
 const SUMMON_REGEX = new RegExp(`^${SUMMON_COMMAND}\\W`, 'gi');

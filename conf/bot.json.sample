@@ -1,5 +1,6 @@
 {
 	"token": "",
 	"name": "popbot",
-	"summon": "!pop"
+	"summon": "!pop",
+	"env": "prod"
 }
