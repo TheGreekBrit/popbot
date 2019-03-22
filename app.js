@@ -155,6 +155,8 @@ client.on('message', msg => {
 	}
 });
 
+client.login(Config.token);
+
 /**
  * Evaluates an arbitrary snippet of Javascript code
  * @param {string} snippet A string of JS code.
