@@ -1,4 +1,7 @@
-require('@google-cloud/debug-agent').start();
+const DEBUG = 1;
+DEBUG? console.log('DEBUG ENABLED'): {};
+
+//require('@google-cloud/debug-agent').start();
 
 const child_process = require('child_process');
 
@@ -163,7 +166,7 @@ function runJsSnippet(snippet) {
 
 		fulfill(result || "empty response");
 
-		reject('ERROR PARSING SOMETHING!!!')
+		//reject('ERROR PARSING SOMETHING!!!')
 	});
 }
 
@@ -175,16 +178,33 @@ function runJsSnippet(snippet) {
  */
 function runPySnippet(snippet, version) {
 	return new Promise((fulfill, reject) => {
-		let pyCommand,
+		let shellCommand,
 			pyFlag = '-c',
 			pyBinary = version === 2 ? 'python2' : 'python3';
 
 		// merge components of shell call
 		// ex: python3 -c print(2 + 3)
-		pyCommand = [pyBinary, pyFlag, '"' + snippet + '"'].join(' ');
-		console.log('full shell cmd:', pyCommand)
+		shellCommand = [pyBinary, pyFlag, '"' + snippet + '"'].join(' ');
+		console.log('full shell cmd:', shellCommand);
 
-		child_process.exec(pyCommand, (err, response) => {
+		if (DEBUG) {
+			cmd =
+				`echo $PATH && which ${pyBinary} && ${pyBinary} -V;`;
+			executeShell(cmd).then(res => {
+				console.log(res);
+			}).catch(err => {
+				console.error(err);
+			});
+		}
+
+		executeShell(shellCommand).then(fulfill).catch(reject);
+
+	});
+}
+
+function executeShell(cmd) {
+	return new Promise((fulfill, reject) => {
+		child_process.exec(cmd, (err, response) => {
 			if (err)
 				reject(err);
 			if (!response)
