@@ -23,19 +23,15 @@ client.on('ready', () => {
 /* Handler for incoming messages */
 client.on('message', msg => {
 	let parsed, evaluated, version, args, author,
-		input = msg.content || '';
+		input = msg.content.split(' ');     // space-delimited array of message text
 
-	console.log('summoned?', !msg.content.startsWith(SUMMON_COMMAND) || msg.author.bot);
+	console.log('summoned?', (input[0].toLowerCase() === SUMMON_COMMAND) && !msg.author.bot);
 
 	// only run when summoned by a user
 	if ((input[0].toLowerCase() !== SUMMON_COMMAND) || msg.author.bot)
 		return;
 
-	console.log('original input:', msg.author.username, msg.content);
-
-	// split command into an array of [summon, cmd, arg1, arg2, ...]
-	input = msg.content.split(' ');
-	console.log('split msg:', input);
+	console.log('original input:', msg.author.username, input);
 
 	// get rid of the summon prefix
 	input.shift();  // [cmd, arg1, arg2, ...]
