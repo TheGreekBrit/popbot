@@ -51,6 +51,7 @@ client.on('message', msg => {
 
 			if (!input) {
 				msg.reply('**ERROR:** snippet missing. Try ' + SUMMON_COMMAND + ' help run');
+				return;
 			}
 			console.log('no cmd:', input);
 
@@ -153,8 +154,6 @@ client.on('message', msg => {
 			break;
 	}
 });
-
-client.login(Config.token);
 
 /**
  * Evaluates an arbitrary snippet of Javascript code
