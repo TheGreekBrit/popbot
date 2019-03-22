@@ -12,7 +12,6 @@ const Config = require('./conf/bot.json');
 if (Config.env === "prod")
 	require('@google-cloud/debug-agent').start();
 
-
 const SUMMON_COMMAND = Config.summon;
 const SUMMON_REGEX = new RegExp(`^${SUMMON_COMMAND}\\W`, 'gi');
 console.log('SUMMON:', SUMMON_COMMAND, SUMMON_REGEX);
@@ -23,20 +22,23 @@ client.on('ready', () => {
 
 /* Handler for incoming messages */
 client.on('message', msg => {
-	let input, parsed, evaluated, version, args, author;
-	console.log('original input:', msg.author.username, msg.content);
+	let parsed, evaluated, version, args, author,
+		input = msg.content || '';
+
 	console.log('summoned?', !msg.content.startsWith(SUMMON_COMMAND) || msg.author.bot);
+
+	// only run when summoned by a user
+	if ((input[0].toLowerCase() !== SUMMON_COMMAND) || msg.author.bot)
+		return;
+
+	console.log('original input:', msg.author.username, msg.content);
+
 	// split command into an array of [summon, cmd, arg1, arg2, ...]
-	
-	 
 	input = msg.content.split(' ');
 	console.log('split msg:', input);
-	if ((input[0].toLowerCase() !== SUMMON_COMMAND) || msg.author.bot) {
-		// only run when summoned by a user
-		return;
-	}
+
 	// get rid of the summon prefix
-	input.shift(); // [cmd, arg1, arg2, ...]
+	input.shift();  // [cmd, arg1, arg2, ...]
 	console.log('no summon:', input);
 
 	// execute command
@@ -57,16 +59,18 @@ client.on('message', msg => {
 			console.log('no cmd:', input);
 
 			switch (input[0]) {
+				//TODO add this back if we switch to GAE Flex
+				//case 'py2':
+					// // use python 2 if specified
+					// // default python 3
+					// if (input[0].endsWith('2'))
+					// 	version = 2;
+					// else
+					// 	version = 3;
+
 				case 'py':
 				case 'py3':
-				case 'py2':
-
-					// use python 2 if specified
-					// default python 3
-					if (input[0].endsWith('2'))
-						version = 2;
-					else
-						version = 3;
+					version = 3;
 
 					input.shift();  // get rid of 'py' element
 					parsed = input.join(' ');
@@ -114,10 +118,10 @@ client.on('message', msg => {
 						`Man page: **run**
 						Description: Evaluates arbitrary code snippets.
 						Usage: ${SUMMON_COMMAND} run *[language]* [snippet]
-						Supported languages: js, py, py2, py3
+						Supported languages: js, py
 						Notes:
 							- js is assumed if *[language]* isn't specified
-							- is assumed to be python3 if py2 isn't specified`
+							- currently python2 isn't supported`
 					);
 					break;
 				case 'ping':
@@ -189,13 +193,15 @@ function runPySnippet(snippet, version) {
 		console.log('full shell cmd:', shellCommand);
 
 		if (DEBUG) {
-			cmd =
-				`echo $PATH && which ${pyBinary} && ${pyBinary} -V;`;
-			executeShell(cmd).then(res => {
-				console.log(res);
-			}).catch(err => {
-				console.error(err);
-			});
+			//TODO remove this
+			//runs bash commands
+			// cmd =
+			// 	`echo $PATH && which ${pyBinary} && ${pyBinary} -V;`;
+			// executeShell(cmd).then(res => {
+			// 	console.log(res);
+			// }).catch(err => {
+			// 	console.error(err);
+			// });
 		}
 
 		executeShell(shellCommand).then(fulfill).catch(reject);
