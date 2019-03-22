@@ -9,6 +9,6 @@
 1. Rename conf/bot.json.sample to conf/bot.json
 2. Set bot token and other options in conf/bot.json
 
-## Running popbot
+## running popbot
 
 `node app.js`
