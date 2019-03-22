@@ -127,7 +127,13 @@ client.on('message', msg => {
 						Usage: ${SUMMON_COMMAND} ping`
 					);
 					break;
-
+				case 'commands':
+					msg.reply(
+						`Man page: **commands**
+						Description: returns a list of available popbot commands
+						Usage: ${SUMMON_COMMAND} commands`
+					);
+					break;
 				default:
 					// help catch-all
 					// ex: !pop help
