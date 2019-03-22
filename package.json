@@ -1,0 +1,14 @@
+{
+  "name": "popbot",
+  "version": "1.0.0",
+  "main": "app.js",
+  "dependencies": {
+    "discord.js": "^11.4.2",
+    "promise": "^8.0.3"
+  },
+  "scripts": {
+    "start": "forever -a -l forever.log -o logs/general.log -e logs/error.log start app.js"
+  },
+  "author": "Alexander Houston",
+  "license": ""
+}
