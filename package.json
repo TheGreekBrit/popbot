@@ -3,12 +3,13 @@
   "version": "1.0.0",
   "main": "app.js",
   "dependencies": {
+    "@google-cloud/debug-agent": "^3.1.0",
     "discord.js": "^11.4.2",
     "forever": "^0.15.3",
     "promise": "^8.0.3"
   },
   "scripts": {
-    "start": "forever -a -l forever.log -o logs/general.log -e logs/error.log start app.js"
+    "start": "node app.js"
   },
   "author": "Alexander Houston",
   "license": ""

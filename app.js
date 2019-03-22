@@ -1,3 +1,5 @@
+require('@google-cloud/debug-agent').start();
+
 const child_process = require('child_process');
 
 const Promise = require('promise');
@@ -19,13 +21,13 @@ client.on('ready', () => {
 client.on('message', msg => {
 	let input, parsed, evaluated, version, args, author;
 	console.log('original input:', msg.author.username, msg.content);
-	console.log('summoned?', msg.content.startsWith(SUMMON_COMMAND) || msg.author.bot);
+	console.log('summoned?', !msg.content.startsWith(SUMMON_COMMAND) || msg.author.bot);
 	// split command into an array of [summon, cmd, arg1, arg2, ...]
 	
 	 
 	input = msg.content.split(' ');
 	console.log('split msg:', input);
-	if (!(input[0].toLowerCase() === SUMMON_COMMAND) || msg.author.bot) {
+	if ((input[0].toLowerCase() !== SUMMON_COMMAND) || msg.author.bot) {
 		// only run when summoned by a user
 		return;
 	}
