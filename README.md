@@ -1,4 +1,4 @@
-### popbot
+# popbot
 
 ## install
 
@@ -6,8 +6,8 @@
 
 ## config
 
-1. Set bot token and other options in conf/bot.json.sample
-2. Rename conf/bot.json.sample to conf/bot.json
+1. Rename conf/bot.json.sample to conf/bot.json
+2. Set bot token and other options in conf/bot.json
 
 ## Running popbot
 

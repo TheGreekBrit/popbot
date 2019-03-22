@@ -10,12 +10,12 @@ const Config = require('./conf/bot.json');
 const SUMMON_COMMAND = Config.summon;
 const SUMMON_REGEX = new RegExp(`^${SUMMON_COMMAND}\\W`, 'gi');
 console.log('SUMMON:', SUMMON_COMMAND, SUMMON_REGEX);
-// noinspection BadExpressionStatementJS
+
 client.on('ready', () => {
 	console.log('Logged in as %s!', client.user.tag);
 });
 
-// noinspection BadExpressionStatementJS
+/* Handler for incoming messages */
 client.on('message', msg => {
 	let input, parsed, evaluated, version, args, author;
 	console.log('original input:', msg.author.username, msg.content);
@@ -37,6 +37,10 @@ client.on('message', msg => {
 	// example with run command:
 	// !arg run 2+2
 	switch (input[0]) {
+		case 'commands':
+			//TODO don't hardcode these
+			msg.reply(`**Available commands:** run, ping, help, commands`);
+			break;
 		case 'run':
 			// get rid of 'run' element
 			input.shift();   // [arg1, arg2, ...]
@@ -104,8 +108,10 @@ client.on('message', msg => {
 						`Man page: **run**
 						Description: Evaluates arbitrary code snippets.
 						Usage: ${SUMMON_COMMAND} run *[language]* [snippet]
-						Supported languages: js, py
-						Notes: js is assumed if *[language]* isn't specified`
+						Supported languages: js, py, py2, py3
+						Notes:
+							- js is assumed if *[language]* isn't specified
+							- is assumed to be python3 if py2 isn't specified`
 					);
 					break;
 				case 'ping':
@@ -115,7 +121,10 @@ client.on('message', msg => {
 						Usage: ${SUMMON_COMMAND} ping`
 					);
 					break;
+
 				default:
+					// help catch-all
+					// ex: !pop help
 					msg.reply(
 						`Man page: **help**
 						Description: displays the man page for a command.
@@ -131,6 +140,11 @@ client.on('message', msg => {
 
 client.login(Config.token);
 
+/**
+ * Evaluates an arbitrary snippet of Javascript code
+ * @param {string} snippet A string of JS code.
+ * @returns {*|Promise} Promise object representing the output of the evaluation.
+ */
 function runJsSnippet(snippet) {
 	return new Promise((fulfill, reject) => {
 		let result;
@@ -151,6 +165,12 @@ function runJsSnippet(snippet) {
 	});
 }
 
+/**
+ * Evaluates an arbitrary snippet of Python code
+ * @param {string} snippet A string of python code.
+ * @param {number} version The python version to use (2 or 3).
+ * @returns {*|Promise} Promise object representing the output of the evaluation.
+ */
 function runPySnippet(snippet, version) {
 	return new Promise((fulfill, reject) => {
 		let pyCommand,
