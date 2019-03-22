@@ -111,7 +111,8 @@ client.on('message', msg => {
 				case 'eval':
 				case 'exec':
 					msg.reply(
-						`Man page: **run**
+						`
+						Man page: **run**
 						Description: Evaluates arbitrary code snippets.
 						Usage: ${SUMMON_COMMAND} run *[language]* [snippet]
 						Supported languages: js, py
@@ -122,14 +123,16 @@ client.on('message', msg => {
 					break;
 				case 'ping':
 					msg.reply(
-						`Man page: **ping**
+						`
+						Man page: **ping**
 						Description: pings ${Config.name} for a reply.
 						Usage: ${SUMMON_COMMAND} ping`
 					);
 					break;
 				case 'commands':
 					msg.reply(
-						`Man page: **commands**
+						`
+						Man page: **commands**
 						Description: returns a list of available popbot commands
 						Usage: ${SUMMON_COMMAND} commands`
 					);
@@ -138,7 +141,8 @@ client.on('message', msg => {
 					// help catch-all
 					// ex: !pop help
 					msg.reply(
-						`Man page: **help**
+						`
+						Man page: **help**
 						Description: displays the man page for a command.
 						Usage: ${SUMMON_COMMAND} help *[command]*`
 					);
