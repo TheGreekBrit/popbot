@@ -6,6 +6,7 @@
     "@google-cloud/debug-agent": "^3.1.0",
     "discord.js": "^11.4.2",
     "forever": "^0.15.3",
+    "pm2": "^3.4.0",
     "promise": "^8.0.3"
   },
   "scripts": {
