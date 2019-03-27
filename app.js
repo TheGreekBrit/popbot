@@ -37,6 +37,11 @@ for (const file of commandFiles) {
 if (Config.env === 'dev') {
 	client.login(Config.token);
 	client = setupClientEvents(client);
+	//import commands into client.commands as {command.name: command}
+	for (const file of commandFiles) {
+		const command = require(`./commands/${file}`);
+		client.commands.set(command.name, command);
+	}
 	console.log('logged in (dev)');
 } else if (Config.env === 'prod') {
 	require('@google-cloud/debug-agent').start();
@@ -83,10 +88,19 @@ setInterval(() => console.log('uptime check! logged into discord at:', client.re
 console.log('SUMMON REGEX:', SUMMON_COMMAND, SUMMON_REGEX);
 
 function setupClientEvents(client) {
-	let command, args;
+	let args;
 
 	client.on('ready', () => {
 		console.log('Logged in as %s!', client.user.tag);
+	
+		client.commands = new Discord.Collection();	
+		
+		//import commands into client.commands as {command.name: command}
+		for (const file of commandFiles) {
+			console.log('loading command:', file);
+			const command = require(`./commands/${file}`);
+			client.commands.set(command.name, command);
+		}
 	});
 
 	/* Handler for incoming messages */
