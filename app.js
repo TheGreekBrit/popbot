@@ -5,6 +5,7 @@ const Config = require('./conf/bot.json');
 const Discord = require('discord.js');			// discord client lib
 
 /* library imports */
+const bodyParser = require('body-parser'); 		// for processing POST requests
 const fs = require('fs');
 const express = require('express');			// http server
 const http = require('http');				// used for external http requests
@@ -21,17 +22,12 @@ const SUMMON_REGEX = new RegExp(`^${SUMMON_COMMAND}\\W`, 'gi');
 const UPTIME_REFRESH_RATE = 10;
 
 //init connection to discord (no auth)
-let client = new Discord.Client();
+const client = new Discord.Client();
 client.commands = new Discord.Collection();
 
 //read command js files from ./commands
+console.log('reading commands...');
 const commandFiles = fs.readdirSync('./commands').filter(file => file.endsWith('.js'));
-
-//import commands into client.commands as {command.name: command}
-for (const file of commandFiles) {
-	const command = require(`./commands/${file}`);
-	client.commands.set(command.name, command);
-}
 
 //start up automatically if not running on GAE
 if (Config.env === 'dev') {
@@ -46,25 +42,30 @@ if (Config.env === 'dev') {
 } else if (Config.env === 'prod') {
 	require('@google-cloud/debug-agent').start();
 	console.log('stackdriver debug enabled');
+
+	//const { PubSub } = require('@google-cloud/pubsub');
+	//const pubsub = new PubSub(process.env.PROJECT_ID);
 }
+
+app.use(bodyParser.json()); 	//parse application/json
 
 //init discord during gae warmup
 //TODO remove if this never runs
-app.get('/_ah/warmup', (req, res) => {
-	console.log('WARMING UP: logging into discord');
-	client = new Discord.Client();
-	client.login(Config.token);
-	res.send('logged in');
-});
+//app.get('/_ah/warmup', (req, res) => {
+//	console.log('WARMING UP: logging into discord');
+//	client = new Discord.Client();
+//	client.login(Config.token);
+//	return res.send('logged in');
+//});
 
 //startup code
 //logs in to discord
 app.get('/_ah/start', (req, res) => {
 	console.log('STARTING INSTANCE');
-	client = new Discord.Client();
+	//client = new Discord.Client();
 	client.login(Config.token);
-	client = setupClientEvents(client);
-	res.send('started up successfully');
+	setupClientEvents(client);
+	return res.send('started up successfully');
 });
 
 //shutdown code
@@ -72,12 +73,42 @@ app.get('/_ah/start', (req, res) => {
 app.get('/_ah/stop', (req, res) => {
 	console.log('STOPPING INSTANCE');
 	client.destroy();
-	res.send('shut down successfully');
+	return res.send('shut down successfully');
 });
 
 //homepage handler
 app.get('/', (req, res) => {
-	res.send('all good');
+	return res.send('all good');
+});
+
+app.post('/reminders/push', (req, res) => {
+	const message = req.body? req.body.message: null;
+
+	if (message) {
+		const buffer = Buffer.from(message.data, 'base64');
+		const data = buffer? buffer.toString(): null;
+		let body = {};
+		
+		try {
+			body = JSON.parse(data);
+		} catch (e) {
+			//bad data
+			//discard message
+			console.log('BAD MESSAGE DATA:', data);
+			return res.send(200);
+		}
+		console.log(`Received message ${message.messageId}:`);
+		console.log(`Data: ${data}`);
+		
+		console.log(Date.now(), parseInt(body.expiration));
+		if (Date.now() > parseInt(body.expiration)) {
+			client.channels.get(body.channel).send(`${body.userId}, ${body.message}!`);
+			//ack the message
+			return res.sendStatus(200);
+		}
+	}
+	//don't ack the message
+	return res.sendStatus(400);
 });
 
 //listen on port 8080

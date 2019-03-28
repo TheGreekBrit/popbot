@@ -1,3 +1,7 @@
 runtime: nodejs10
 manual_scaling:
         instances: 1
+env_variables:
+        PUBSUB_TOPIC: "reminders"
+        PORT: 8080
+        PROJECT_ID: "popbot-discord"
