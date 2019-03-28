@@ -6,7 +6,8 @@ pm2.connect(() => {
 	pm2.start({
 		script: 'app.js',
 		env: {                            // If needed declare some environment variables
-			'PORT': 8080,
+			PUBSUB_TOPIC: 'reminders',
+			PORT: 8080,
 		},
 	}, err => {
 		if (err) return console.error('Error while launching applications', err.stack || err);

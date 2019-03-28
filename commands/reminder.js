@@ -1,6 +1,7 @@
 const parse = require('parse-duration');        // parses time durations
-const Promise = require('Promise');
+const Promise = require('promise');
 const { PubSub } = require('@google-cloud/pubsub');
+const pubsub = new PubSub(process.env.PROJECT_ID);
 
 module.exports = {
 	name: 'reminder',
@@ -24,11 +25,11 @@ module.exports = {
 		const dataBuffer = Buffer.from(JSON.stringify(reminderData));
 
 		pubsub
-			.topic(topicName)
+			.topic(process.env.PUBSUB_TOPIC)
 			.publish(dataBuffer)
 			.then(messageId => {
 				console.log(`Message ${messageId} published`);
-				message.reply(`Ack! I'll remind you at ${new Date(data.expiration)}`);
+				message.reply('ack!');
 			})
 			.catch(err => console.error('error publishing message:', err));
 	}
