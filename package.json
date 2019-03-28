@@ -9,6 +9,7 @@
     "discord.js": "^11.4.2",
     "express": "^4.16.4",
     "forever": "^0.15.3",
+    "parse-duration": "^0.1.1",
     "pm2": "^3.4.0",
     "promise": "^8.0.3",
     "request": "^2.88.0"

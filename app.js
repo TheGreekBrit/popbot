@@ -32,7 +32,7 @@ const commandFiles = fs.readdirSync('./commands').filter(file => file.endsWith('
 //start up automatically if not running on GAE
 if (Config.env === 'dev') {
 	client.login(Config.token);
-	client = setupClientEvents(client);
+	setupClientEvents(client);
 	//import commands into client.commands as {command.name: command}
 	for (const file of commandFiles) {
 		const command = require(`./commands/${file}`);
