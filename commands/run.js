@@ -35,8 +35,8 @@ module.exports = {
 
 		execSnippet(snippet, version)
 			.then(response => {
-				console.log(`${language} response: ${response}`);
-				return message.reply(`${language} response: ${response}`);
+				console.log(`${language} response:\n${response}`);
+				return message.reply(`${language} response:\n${response}`);
 			})
 			.catch(error => {
 				console.error(`${language} error: ${error}\nsnippet: ${snippet}`);

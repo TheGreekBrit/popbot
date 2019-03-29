@@ -97,10 +97,14 @@ app.post('/reminders/push', (req, res) => {
 			console.log('BAD MESSAGE DATA:', data);
 			return res.send(200);
 		}
-		console.log(`Received message ${message.messageId}:`);
-		console.log(`Data: ${data}`);
 		
-		console.log(Date.now(), parseInt(body.expiration));
+		if (new Date().getMinutes() % 10 === 0) {
+			//log reminder queue every 10 minutes
+			console.log(`Received message ${message.messageId}:`);
+			console.log(`Data: ${data}`);
+		}
+		
+		//console.log(Date.now(), parseInt(body.expiration));
 		if (Date.now() > parseInt(body.expiration)) {
 			client.channels.get(body.channel).send(`${body.userId}, ${body.message}!`);
 			//ack the message
